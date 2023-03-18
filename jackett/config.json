@@ -69,7 +69,8 @@
   "name": "Jackett NAS",
   "options": {
     "PGID": 0,
-    "PUID": 0
+    "PUID": 0,
+    "network_mode": "transmission_openvpn"
   },
   "ports": {
     "9117/tcp": 9117
@@ -89,6 +90,7 @@
     "cifsusername": "str?",
     "localdisks": "str?",
     "networkdisks": "str?"
+    "network_mode": "str"
   },
   "slug": "jackett_nas",
   "url": "https://github.com/alexbelgium/hassio-addons/tree/master/jackett",
