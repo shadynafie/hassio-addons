@@ -1,5 +1,6 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
+set -e
 
 #################
 # CORRECT IMAGE #
@@ -10,7 +11,7 @@
 #sed -i 's|manifest.json">|manifest.json" crossorigin="use-credentials">|g' /whoogle/app/templates/index.html
 
 #Allow ingress
-sed -i "1a export WHOOGLE_URL_PREFIX=$(bashio::addon.ingress_entry)" /etc/cont-init.d/99-run.sh
+sed -i "1a export WHOOGLE_URL_PREFIX=\'$(bashio::addon.ingress_entry)\'" /etc/cont-init.d/99-run.sh
 
 #################
 # NGINX SETTING #
@@ -38,12 +39,17 @@ if bashio::var.has_value "${port}"; then
     fi
 fi
 
-ingress_port=$(bashio::addon.ingress_port)
-ingress_interface=$(bashio::addon.ip_address)
-ingress_entry=$(bashio::addon.ingress_entry)
+ingress_port="$(bashio::addon.ingress_port)"
+ingress_interface="$(bashio::addon.ip_address)"
+ingress_entry="$(bashio::addon.ingress_entry)"
+ingress_entry_modified="$(echo "$ingress_entry" | sed 's/[@_!#$%^&*()<>?/\|}{~:]//g')"
+
 sed -i "s/%%port%%/${ingress_port}/g" /etc/nginx/servers/ingress.conf
 sed -i "s/%%interface%%/${ingress_interface}/g" /etc/nginx/servers/ingress.conf
 sed -i "s#%%ingress_entry%%#${ingress_entry}#g" /etc/nginx/servers/ingress.conf
+sed -i "s#%%ingress_entry_modified%%#/${ingress_entry_modified}#g" /etc/nginx/servers/ingress.conf
+sed -i "s#%%ingress_entry%%#${ingress_entry}#g" /etc/nginx/servers/nginx.conf
+sed -i "s#%%ingress_entry_modified%%#/${ingress_entry_modified}#g" /etc/nginx/servers/nginx.conf
 
 dns_host=127.0.0.11
 sed -i "s/%%dns_host%%/${dns_host}/g" /etc/nginx/includes/resolver.conf

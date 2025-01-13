@@ -1,17 +1,19 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
 # shellcheck disable=SC2086
+set -e
 
-LAUNCHER="sudo -u abc php /data/config/www/nextcloud/occ" || bashio::log.info "/data/config/www/nextcloud/occ not found"
-if ! bashio::fs.file_exists '/data/config/www/nextcloud/occ'; then
-    LAUNCHER=$(find / -name "occ" -print -quit)
-fi || bashio::log.info "occ not found"
+# Runs only after initialization done
+# shellcheck disable=SC2128
+if [ ! -f /app/www/public/occ ]; then cp /etc/cont-init.d/"$(basename "${BASH_SOURCE}")" /scripts/ && exit 0; fi
 
-# Make sure there is an Nextcloud installation
-if [[ $($LAUNCHER -V) == *"not installed"* ]]; then
-    bashio::log.warning "It seems there is no Nextcloud server installed. Please restart the addon after initialization of the user."
-    exit 0
-fi
+# Only execute if installed
+if [ -f /notinstalled ]; then exit 0; fi
+
+# Specify launcher
+PUID=$(bashio::config "PUID")
+PGID=$(bashio::config "PGID")
+LAUNCHER="sudo -u abc php /app/www/public/occ"
 
 if $LAUNCHER fulltextsearch:test &>/dev/null; then
     echo "Full Text Search is already working"
@@ -33,7 +35,7 @@ if $LAUNCHER fulltextsearch:test &>/dev/null; then
             $LAUNCHER app:install $app >/dev/null
             $LAUNCHER app:enable $app >/dev/null
         done
-        chown -R abc:abc $NEXTCLOUD_PATH/apps
+        chown -R "$PUID":"$PGID" $NEXTCLOUD_PATH/apps
 
         if bashio::config.has_value 'elasticsearch_server'; then
             HOST=$(bashio::config 'elasticsearch_server')

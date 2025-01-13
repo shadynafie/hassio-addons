@@ -1,5 +1,10 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
+set -e
+
+# Runs only after initialization done
+# shellcheck disable=SC2128
+if [ ! -f /app/www/public/occ ]; then cp /etc/cont-init.d/"$(basename "${BASH_SOURCE}")" /scripts/ && exit 0; fi
 
 # Install specific packages
 if [ ! -d /data/config/www/nextcloud/apps/pdfannotate ]; then
