@@ -1,39 +1,110 @@
+
+## ubuntu-2024-09-15 (2024-09-15)
+- Update to latest version from photoprism/photoprism
+
+## ubuntu-2024-07-11 (2024-07-11)
+- Update to latest version from photoprism/photoprism
+## ubuntu-2024-05-31-3 (10-06-2024)
+- Minor bugs fixed
+
+## ubuntu-2024-05-31 (2024-05-31)
+- Update to latest version from photoprism/photoprism
+
+## ubuntu-2024-05-23 (2024-05-23)
+- Update to latest version from photoprism/photoprism
+## 240420-ef5f14bc4 (18-05-2024)
+- Minor bugs fixed
+
+## preview-ubuntu-2023-04-29-4 (2023-12-04)
+
+- Allows non-admin users to use paperless from HA sidebar
+
+## preview-ubuntu-2023-04-29 (2023-04-29)
+
+- Update to latest version from photoprism/photoprism
+## 231021 (22-10-2023)
+
+- Update to latest version from photoprism/photoprism
+
+## ubuntu-231011 (17-10-2023)
+
+- Update to latest version from photoprism/photoprism
+
+## ubuntu-230719-73fa7bbe8 (25-07-2023)
+
+- Update to latest version from photoprism/photoprism
+
+## ubuntu (24-07-2023)
+
+- Update to latest version from photoprism/photoprism
+
+## ubuntu (10-06-2023)
+
+- Update to latest version from photoprism/photoprism
+- Feat : cifsdomain added
+
+## preview-9 (07-05-2023)
+
+- Minor bugs fixed
+
+## preview-8 (24-04-2023)
+
+- Minor bugs fixed
+
+## preview-7 (24-04-2023)
+
+- Minor bugs fixed
+- Allow environment to be available from command line
+
+## Preview-6 (15-04-2023)
+
+- Minor bugs fixed
 - Implemented healthcheck
 - Add message if ingress disabled
 
 ## Preview (27-01-2023)
+
 - Switch build to preview
 - Add "video": true
 - Default PHOTOPRISM_DETECT_NSFW true
 - Add sys_rawio
 
 ## 20220121 (10-12-2022)
+
 - Update to latest version from photoprism/photoprism
 - BREAKING CHANGE : url for direct access to be updated, check logs for url to use
 - WARNING : update to supervisor 2022.11 before installing
 
 ## 20220121 (01-09-2022)
+
 - Update to latest version from photoprism/photoprism
 
 ## 220730-jammy (04-08-2022)
+
 - Update to latest version from photoprism/photoprism
 
 ## 220728-jammy (30-07-2022)
+
 - Update to latest version from photoprism/photoprism
 
 ## 220629-jammy (30-06-2022)
+
 - Update to latest version from photoprism/photoprism
 
 ## 220617-jammy (18-06-2022)
+
 - Update to latest version from photoprism/photoprism
 
 ## 220614-jammy (16-06-2022)
+
 - Update to latest version from photoprism/photoprism
 
 ## 220528-jammy (31-05-2022)
+
 - Update to latest version from photoprism/photoprism
 
 ## 220524-bookworm (26-05-2022)
+
 - Update to latest version from photoprism/photoprism
 - Feat: ingress implementation
 

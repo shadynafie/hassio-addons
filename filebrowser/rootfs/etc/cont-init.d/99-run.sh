@@ -1,5 +1,6 @@
 #!/usr/bin/env bashio
 # shellcheck shell=bash
+set -e
 
 ############
 # TIMEZONE #
@@ -68,7 +69,7 @@ NOAUTH=""
 if bashio::config.true 'NoAuth'; then
     if ! bashio::fs.file_exists "/data/noauth"; then
         rm /data/auth &>/dev/null || true
-        rm /config/addons_config/filebrowser/filebrowser.dB &>/dev/null || true
+        rm /config/filebrowser.dB &>/dev/null || true
         touch /data/noauth
         NOAUTH="--noauth"
         bashio::log.warning "Auth method change, database reset"
@@ -77,23 +78,36 @@ if bashio::config.true 'NoAuth'; then
 else
     if ! bashio::fs.file_exists "/data/auth"; then
         rm /data/noauth &>/dev/null || true
-        rm /config/addons_config/filebrowser/filebrowser.dB &>/dev/null || true
+        rm /config/filebrowser.dB &>/dev/null || true
         touch /data/auth
         bashio::log.warning "Auth method change, database reset"
     fi
     bashio::log.info "Default username/password : admin/admin"
 fi
 
+# Set base folder
 if bashio::config.has_value 'base_folder'; then
     BASE_FOLDER=$(bashio::config 'base_folder')
 else
     BASE_FOLDER=/
 fi
 
+# Disable thumbnails
+if bashio::config.true 'disable_thumbnails'; then
+    DISABLE_THUMBNAILS="--disable-thumbnails"
+else
+    DISABLE_THUMBNAILS=""
+fi
+
+# Remove configuration file
+if [ -f /.filebrowser.json ]; then
+    rm /.filebrowser.json
+fi
+
 bashio::log.info "Starting..."
 
 # shellcheck disable=SC2086
-/./filebrowser $CERTFILE $KEYFILE --root="$BASE_FOLDER" --address=0.0.0.0 --database=/config/addons_config/filebrowser/filebrowser.dB "$NOAUTH" &
+/./filebrowser --disable-preview-resize --disable-type-detection-by-header --cache-dir="/cache" $CERTFILE $KEYFILE --root="$BASE_FOLDER" --address=0.0.0.0 --port=8080 --database=/config/filebrowser.dB "$NOAUTH" "$DISABLE_THUMBNAILS" &
 bashio::net.wait_for 8080 localhost 900 || true
 bashio::log.info "Started !"
 exec nginx

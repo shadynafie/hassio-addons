@@ -1,5 +1,6 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
+set -e
 
 ################
 # Alternate UI #
@@ -24,16 +25,12 @@ if bashio::config.has_value 'customUI' && [ ! "$CUSTOMUI" = default ] && [ ! "$C
             ;;
 
         "transmission-web-control")
-            mkdir -p /tmp/twctemp && \
-                TWCVERSION=$(curl -s "https://api.github.com/repos/ronggang/transmission-web-control/releases/latest" | jq -r .tag_name)
-            curl -o /tmp/twc.tar.gz -L "https://github.com/ronggang/transmission-web-control/archive/${TWCVERSION}.tar.gz"
-            tar xf /tmp/twc.tar.gz -C /tmp/twctemp --strip-components=1
-            mv /tmp/twctemp/src /transmission-web-control
+            ### Install WebUI
+            mkdir -p /transmission-web-control
+            curl -sL "$(curl -s https://api.github.com/repos/ronggang/transmission-web-control/releases/latest | jq --raw-output '.tarball_url')" | tar -C /transmission-web-control/ --strip-components=2 -xz \
             # Enables the original UI button in transmission-web-control
-            ln -s /usr/share/transmission/web/style /transmission-web-control && \
-                ln -s /usr/share/transmission/web/images /transmission-web-control && \
-                ln -s /usr/share/transmission/web/javascript /transmission-web-control && \
-                ln -s /usr/share/transmission/web/index.html /transmission-web-control/index.original.html
+            ln -s /usr/share/transmission/public_html/* /transmission-web-control/ 2>/dev/null || true
+            ln -s /usr/share/transmission/public_html/index.html /transmission-web-control/index.original.html
             ;;
 
         "kettu")
@@ -48,10 +45,19 @@ if bashio::config.has_value 'customUI' && [ ! "$CUSTOMUI" = default ] && [ ! "$C
             ;;
 
         "transmissionic")
-            TRANSMISSIONIC_VERSION=$(curl -s "https://api.github.com/repos/6c65726f79/Transmissionic/releases/latest" | jq -r .tag_name)
-            curl -o /tmp/transmissionic.zip -L "https://github.com/6c65726f79/Transmissionic/releases/download/${TRANSMISSIONIC_VERSION}/Transmissionic-webui-${TRANSMISSIONIC_VERSION}.zip"
-            unzip /tmp/transmissionic.zip -d /tmp
-            mv /tmp/web /transmissionic
+            TRANSMISSIONIC_VERSION=$(curl -s -L "https://api.github.com/repos/6c65726f79/Transmissionic/releases/latest" | jq -r .tag_name)
+            echo "**** grab transmissionic ****" && \
+            if [ -z "${TRANSMISSIONIC_VERSION+x}" ]; then \
+                TRANSMISSIONIC_VERSION="$(curl -s "https://api.github.com/repos/6c65726f79/Transmissionic/releases/latest" \
+                | jq -rc ".tag_name")"; \
+            fi && \
+            curl -o \
+                /tmp/transmissionic.zip -L \
+                "https://github.com/6c65726f79/Transmissionic/releases/download/${TRANSMISSIONIC_VERSION}/Transmissionic-webui-${TRANSMISSIONIC_VERSION}.zip" && \
+            unzip \
+                /tmp/transmissionic.zip -d \
+                /themes && \
+            mv /themes/web /transmissionic
             ;;
 
         **)
@@ -61,7 +67,10 @@ if bashio::config.has_value 'customUI' && [ ! "$CUSTOMUI" = default ] && [ ! "$C
     esac
 
     # Define variable
+    CUSTOMUI="/${CUSTOMUI}"
+    chown -R abc:abc "$CUSTOMUI"
     if cat /etc/services.d/*/*run* &>/dev/null; then sed -i "1a export TRANSMISSION_WEB_HOME=$CUSTOMUI" /etc/services.d/*/*run* 2>/dev/null; fi
     if [ -d /var/run/s6/container_environment ]; then printf "%s" "$CUSTOMUI" > /var/run/s6/container_environment/TRANSMISSION_WEB_HOME; fi
+    printf "%s\n" "TRANSMISSION_WEB_HOME=\"$CUSTOMUI\"" >> ~/.bashrc
 
 fi
