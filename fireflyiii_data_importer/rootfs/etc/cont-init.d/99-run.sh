@@ -1,8 +1,8 @@
 #!/usr/bin/env bashio
 # shellcheck shell=bash
+set -e
 
 CONFIGSOURCE=$(bashio::config "CONFIG_LOCATION")
-CONFIGSOURCE="$(dirname "$CONFIGSOURCE")"
 
 #################
 # CONFIG IMPORT #
@@ -13,6 +13,17 @@ if [ "$(ls -A "$CONFIGSOURCE/configurations")" ]; then
     JSON_CONFIGURATION_DIR="$CONFIGSOURCE/configurations"
     export JSON_CONFIGURATION_DIR
 fi
+
+# Allow config dir
+export IMPORT_DIR_ALLOWLIST="$CONFIGSOURCE"
+export IMPORT_DIR_WHITELIST="${CONFIGSOURCE}/import_files"
+
+# shellcheck disable=SC2155
+export AUTO_IMPORT_SECRET="$(bashio::config "AUTO_IMPORT_SECRET")"
+# shellcheck disable=SC2155
+export CAN_POST_FILES="$(bashio::config "CAN_POST_FILES")"
+# shellcheck disable=SC2155
+export CAN_POST_AUTOIMPORT="$(bashio::config "CAN_POST_AUTOIMPORT")"
 
 ################
 # CRON OPTIONS #

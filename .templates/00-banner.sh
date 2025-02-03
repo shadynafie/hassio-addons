@@ -1,5 +1,6 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
+set -e
 # ==============================================================================
 # Displays a simple add-on banner on startup
 # ==============================================================================
@@ -32,8 +33,10 @@ if bashio::supervisor.ping; then
         ' Please, share the above information when looking for help'
     bashio::log.blue \
         ' or support in, e.g., GitHub, forums'
+    bashio::log.blue \
+        '-----------------------------------------------------------'
     bashio::log.green \
-        ' https://github.com/alexbelgium/hassio-addons'
+        ' Provided by: https://github.com/alexbelgium/hassio-addons '
     bashio::log.blue \
         '-----------------------------------------------------------'
 fi
@@ -41,3 +44,18 @@ fi
 # ==============================================================================
 # Global actions for all addons
 # ==============================================================================
+if bashio::config.has_value "PUID" && bashio::config.has_value "PGID"; then
+    bashio::log.green \
+        ' Defining permissions for main user : '
+    PUID="$(bashio::config "PUID")"
+    PGID="$(bashio::config "PGID")"
+    bashio::log.blue "User UID: $PUID"
+    bashio::log.blue "User GID : $PGID"
+    id -u abc &>/dev/null || usermod -o -u "$PUID" abc &>/dev/null || true
+    id -g abc &>/dev/null || groupmod -o -g "$PGID" abc &>/dev/null || true
+    bashio::log.blue \
+        '-----------------------------------------------------------'
+fi
+
+# Clean bashrc file
+if [ -f ~/.bashrc ]; then rm ~/.bashrc; fi

@@ -14,10 +14,11 @@ on:
 
 jobs:
   make-executable:
+    if: github.repository_owner == 'alexbelgium'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         
       - name: Make scripts executable
         run: |
@@ -43,7 +44,7 @@ jobs:
       # Checkout the code base #
       ##########################
       - name: Checkout the code base
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           # Full git history is needed to get a proper list of changed files within `super-linter`
           fetch-depth: 0
@@ -63,11 +64,12 @@ jobs:
 
   check_crlf:
     name: Check CRLF action
+    if: github.repository_owner == 'alexbelgium'
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository contents
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Use action to check for CRLF endings
         uses: erclu/check-crlf@v1.2.0

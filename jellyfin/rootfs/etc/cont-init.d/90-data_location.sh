@@ -1,5 +1,6 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
+set -e
 
 # Define user
 PUID=$(bashio::config "PUID")
@@ -23,6 +24,15 @@ mkdir -p "$LOCATION" "$LOCATION"/data "$LOCATION"/cache "$LOCATION"/log "$LOCATI
 # Custom web location
 cp -rn /usr/share/jellyfin/web/* "$LOCATION"/web/
 sed -i "s|/usr/share/jellyfin|$LOCATION|g" /etc/nginx/servers/ingress.conf
+
+# Custom transcode location
+mkdir -p /data/transcodes
+if [ -d "$LOCATION"/data/transcodes ]; then
+    cp -rT "$LOCATION"/data/transcodes /data/transcodes || true
+    rm -r "$LOCATION"/data/transcodes
+fi
+ln -s /data/transcodes "$LOCATION"/data/transcodes
+chown -R "$PUID":"$PGID" /data/transcodes
 
 # Permissions
 bashio::log.info "Setting ownership to $PUID:$PGID"
