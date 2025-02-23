@@ -1,22 +1,24 @@
-## &#9888; Open Issue : [🐛 [Qbittorrent] Login via Ingress fails (opened 2023-03-19)](https://github.com/alexbelgium/hassio-addons/issues/760) by [@antonio1475](https://github.com/antonio1475)
 # Home assistant add-on: qbittorrent
 
 [![Donate][donation-badge]](https://www.buymeacoffee.com/alexbelgium)
+[![Donate][paypal-badge]](https://www.paypal.com/donate/?hosted_button_id=DZFULJZTP3UQA)
 
 ![Version](https://img.shields.io/badge/dynamic/json?label=Version&query=%24.version&url=https%3A%2F%2Fraw.githubusercontent.com%2Falexbelgium%2Fhassio-addons%2Fmaster%2Fqbittorrent%2Fconfig.json)
 ![Ingress](https://img.shields.io/badge/dynamic/json?label=Ingress&query=%24.ingress&url=https%3A%2F%2Fraw.githubusercontent.com%2Falexbelgium%2Fhassio-addons%2Fmaster%2Fqbittorrent%2Fconfig.json)
 ![Arch](https://img.shields.io/badge/dynamic/json?color=success&label=Arch&query=%24.arch&url=https%3A%2F%2Fraw.githubusercontent.com%2Falexbelgium%2Fhassio-addons%2Fmaster%2Fqbittorrent%2Fconfig.json)
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/9c6cf10bdbba45ecb202d7f579b5be0e)](https://www.codacy.com/gh/alexbelgium/hassio-addons/dashboard?utm_source=github.com&utm_medium=referral&utm_content=alexbelgium/hassio-addons&utm_campaign=Badge_Grade)
-[![GitHub Super-Linter](https://github.com/alexbelgium/hassio-addons/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
-[![Builder](https://github.com/alexbelgium/hassio-addons/workflows/Builder/badge.svg)](https://github.com/alexbelgium/hassio-addons/actions/workflows/builder.yaml)
+[![GitHub Super-Linter](https://img.shields.io/github/actions/workflow/status/alexbelgium/hassio-addons/weekly-supelinter.yaml?label=Lint%20code%20base)](https://github.com/alexbelgium/hassio-addons/actions/workflows/weekly-supelinter.yaml)
+[![Builder](https://img.shields.io/github/actions/workflow/status/alexbelgium/hassio-addons/onpush_builder.yaml?label=Builder)](https://github.com/alexbelgium/hassio-addons/actions/workflows/onpush_builder.yaml)
 
-[donation-badge]: https://img.shields.io/badge/Buy%20me%20a%20coffee-%23d32f2f?logo=buy-me-a-coffee&style=flat&logoColor=white
+[donation-badge]: https://img.shields.io/badge/Buy%20me%20a%20coffee%20(no%20paypal)-%23d32f2f?logo=buy-me-a-coffee&style=flat&logoColor=white
+[paypal-badge]: https://img.shields.io/badge/Buy%20me%20a%20coffee%20with%20Paypal-0070BA?logo=paypal&style=flat&logoColor=white
 
 _Thanks to everyone having starred my repo! To star it click on the image below, then it will be on top right. Thanks!_
 
+[![Stargazers repo roster for @alexbelgium/hassio-addons](https://raw.githubusercontent.com/alexbelgium/hassio-addons/master/.github/stars2.svg)](https://github.com/alexbelgium/hassio-addons/stargazers)
 
-[![Stargazers repo roster for @alexbelgium/hassio-addons](https://git-lister.onrender.com/api/stars/alexbelgium/hassio-addons?limit=30)](https://github.com/alexbelgium/hassio-addons/stargazers)
+![downloads evolution](https://raw.githubusercontent.com/alexbelgium/hassio-addons/master/qbittorrent/stats.png)
 
 ## About
 
@@ -38,7 +40,7 @@ This addons has several configurable options :
 
 ---
 
-Webui can be found at <http://your-ip:8080>, or in your sidebar using Ingress.
+Webui can be found at <http://homeassistant:8080>, or in your sidebar using Ingress.
 The default username/password : described in the startup log.
 Configurations can be done through the app webUI, except for the following options
 
@@ -52,7 +54,7 @@ GPID: user
 ssl: true/false
 certfile: fullchain.pem #ssl certificate, must be located in /ssl
 keyfile: privkey.pem #sslkeyfile, must be located in /ssl
-whitelist: "localhost,192.168.0.0/16" # list ip subnets that won't need a password (optional)
+whitelist: "localhost,192.168.0.0/16" # Type `null` to disable. List ip subnets that won't need a password (optional)
 customUI: selection from list # alternative webUI can be set here. Latest version set at each addon start. Select 'custom' to fill it yourself in the webui
 DNS_servers: 8.8.8.8,1.1.1.1 # Keep blank to use router’s DNS, or set custom DNS to avoid spamming in case of local DNS ad-remover
 SavePath: "/share/qbittorrent" # Define the download directory
@@ -62,7 +64,7 @@ cifsusername: "username" # optional, smb username, same for all smb shares
 cifspassword: "password" # optional, smb password
 cifsdomain: "domain" # optional, allow setting the domain for the smb share
 openvpn_enabled: true/false # is openvpn required to start qbittorrent
-openvpn_config": For example "config.ovpn" # name of the file located in /config/openvpn.
+openvpn_config": For example "config.ovpn" # name of the file located in /config/openvpn. If empty, a random one will be used
 openvpn_username": USERNAME
 openvpn_password: YOURPASSWORD
 openvpn_alt_mode: bind at container level and not app level
@@ -106,8 +108,8 @@ These lines will expose a `sensor.get_torrent_speed` that updates every 60 secon
 
 ## Common issues
 
-### ipv6 issues with openvpn (@happycoo)
-
+<details>
+  <summary>### ipv6 issues with openvpn (@happycoo)</summary>
 Add this code to your .ovpn config
 
 ```bash
@@ -119,8 +121,43 @@ pull-filter ignore "dhcp-option DNS6"
 pull-filter ignore "tun-ipv6"
 pull-filter ignore "ifconfig-ipv6"
 ```
+</details>
 
-### nginx error code (@Nanianmichaels)
+<details>
+  <summary>### Monitored folders (@FaliseDotCom)</summary>
+
+- go to config\addons_config\qBittorrent
+- find (or create) the file watched_folders.json
+- paste or adjust to the following:
+
+```json
+{
+    "folder/to/watch": {
+        "add_torrent_params": {
+            "category": "",
+            "content_layout": "Original",
+            "download_limit": -1,
+            "download_path": "[folder/for/INCOMPLETE_downloads]",
+            "operating_mode": "AutoManaged",
+            "ratio_limit": -2,
+            "save_path": "[folder/for/COMPLETED_downloads]",
+            "seeding_time_limit": -2,
+            "skip_checking": false,
+            "stopped": false,
+            "tags": [
+            ],
+            "upload_limit": -1,
+            "use_auto_tmm": false,
+            "use_download_path": true
+        },
+        "recursive": false
+    }
+}
+```
+</details>
+
+<details>
+  <summary>### nginx error code (@Nanianmichaels)</summary>
 
 > [cont-init.d] 30-nginx.sh: executing...
 > [cont-init.d] 30-nginx.sh: exited 1.
@@ -129,17 +166,27 @@ Wait a couple minutes and restart addon, it could be a temporary unavailability 
 
 ### Local mount with invalid argument (@antonio1475)
 
-> [cont-init.d] 92-local_mounts.sh: executing...
+> [cont-init.d] 00-local_mounts.sh: executing...
 > Local Disks mounting...
 > mount: mounting /dev/sda1 on /mnt/sda1 failed: Invalid argument
 > [19:19:44] FATAL: Unable to mount local drives! Please check the name.
-> [cont-init.d] 92-local_mounts.sh: exited 0.
+> [cont-init.d] 00-local_mounts.sh: exited 0.
 
 Try to mount by putting the partition label in the "localdisks" options instead of the hardware name
+</details>
 
-### Loss of metadata fetching with openvpn after several days (@almico)
+<details>
+  <summary>### Loss of metadata fetching with openvpn after several days (@almico)</summary>
 
 Add `ping-restart 60` to your config.ovpn
+</details>
+
+<details>
+  <summary>### Downloads info are empty on small scale window (@aviadlevy)</summary>
+
+When my window size width is lower than 960 pixels my downloads are empty.
+Solution is to reset the Vuetorrent settings.
+</details>
 
 ## Support
 

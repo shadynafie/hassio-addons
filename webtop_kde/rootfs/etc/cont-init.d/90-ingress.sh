@@ -1,36 +1,29 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
+set -e
 
-#################
-# NGINX SETTING #
-#################
-declare port
-declare certfile
-declare ingress_interface
-declare ingress_port
-declare keyfile
+# nginx Path
+NGINX_CONFIG=/etc/nginx/sites-available/ingress.conf
+SUBFOLDER="$(bashio::addon.ingress_entry)"
 
-port=$(bashio::addon.port 80)
-if bashio::var.has_value "${port}"; then
-    bashio::config.require.ssl
+# Copy template
+cp /defaults/default.conf "${NGINX_CONFIG}"
+# Remove ssl part
+awk -v n=4 '/server/{n--}; n > 0' "${NGINX_CONFIG}" > tmpfile
+mv tmpfile "${NGINX_CONFIG}"
 
-    if bashio::config.true 'ssl'; then
-        certfile=$(bashio::config 'certfile')
-        keyfile=$(bashio::config 'keyfile')
+# Remove ipv6
+sed -i '/listen \[::\]/d' "${NGINX_CONFIG}"
+# Add ingress parameters
+sed -i "s|3000|$(bashio::addon.ingress_port)|g" "${NGINX_CONFIG}"
+sed -i '/proxy_buffering/a proxy_set_header Accept-Encoding "";' "${NGINX_CONFIG}"
+sed -i '/proxy_buffering/a sub_filter_once off;' "${NGINX_CONFIG}"
+sed -i '/proxy_buffering/a sub_filter_types *;' "${NGINX_CONFIG}"
+sed -i '/proxy_buffering/a sub_filter "vnc/index.html?autoconnect" "vnc/index.html?path=%%path%%/websockify?autoconnect";' "${NGINX_CONFIG}"
+sed -i "s|%%path%%|${SUBFOLDER:1}|g" "${NGINX_CONFIG}"
 
-        mv /etc/nginx/servers/direct-ssl.disabled /etc/nginx/servers/direct.conf
-        sed -i "s/%%certfile%%/${certfile}/g" /etc/nginx/servers/direct.conf
-        sed -i "s/%%keyfile%%/${keyfile}/g" /etc/nginx/servers/direct.conf
+# Correct image
+sed -i "s|SUBFOLDERwebsockify|/websockify|g" "${NGINX_CONFIG}"
 
-    else
-        mv /etc/nginx/servers/direct.disabled /etc/nginx/servers/direct.conf
-    fi
-fi
-
-ingress_port=$(bashio::addon.ingress_port)
-ingress_interface=$(bashio::addon.ip_address)
-sed -i "s/%%port%%/${ingress_port}/g" /etc/nginx/servers/ingress.conf
-sed -i "s/%%interface%%/${ingress_interface}/g" /etc/nginx/servers/ingress.conf
-
-# Implement SUBFOLDER value
-sed -i "1a SUBFOLDER=$(bashio::addon.ingress_url)" /etc/s6-overlay/s6-rc.d/svc-autostart/run
+# Enable ingress
+cp "${NGINX_CONFIG}" /etc/nginx/sites-enabled

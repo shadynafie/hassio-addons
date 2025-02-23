@@ -1,16 +1,17 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
+set -e
 
-LAUNCHER="sudo -u abc php /data/config/www/nextcloud/occ" || bashio::log.info "/data/config/www/nextcloud/occ not found"
-if ! bashio::fs.file_exists '/data/config/www/nextcloud/occ'; then
-    LAUNCHER=$(find / -name "occ" -print -quit)
-fi || bashio::log.info "occ not found"
+# Runs only after initialization done
+# shellcheck disable=SC2128
+if [ ! -f /app/www/public/occ ]; then cp /etc/cont-init.d/"$(basename "${BASH_SOURCE}")" /scripts/ && exit 0; fi
 
-# Make sure there is an Nextcloud installation
-if [[ $($LAUNCHER -V) == *"not installed"* ]]; then
-    bashio::log.warning "It seems there is no Nextcloud server installed. Please restart the addon after initialization of the user."
-    exit 0
-fi
+# Only execute if installed
+if [ -f /notinstalled ]; then exit 0; fi
+
+# Specify launcher
+
+LAUNCHER="sudo -u abc php /app/www/public/occ"
 
 ####################
 # Initialization   #

@@ -5,7 +5,7 @@
     "armv7"
   ],
   "codenotary": "alexandrep.github@gmail.com",
-  "description": "translates queries from apps (Sonarr, SickRage, CouchPotato, Mylar, etc) into tracker-site-specific http queries, parses the html response, then sends results back to the requesting software",
+  "description": "Translates queries from apps (Sonarr, Sickrage, CouchPotato, Mylar, etc) into tracker-site-specific http queries, parses the html response, then sends results back to the requesting software",
   "devices": [
     "/dev/dri",
     "/dev/dri/card0",
@@ -28,8 +28,19 @@
     "/dev/sdf",
     "/dev/sdg",
     "/dev/nvme",
+    "/dev/nvme0",
+    "/dev/nvme0n1",
     "/dev/nvme0n1p1",
     "/dev/nvme0n1p2",
+    "/dev/nvme0n1p3",
+    "/dev/nvme1n1",
+    "/dev/nvme1n1p1",
+    "/dev/nvme1n1p2",
+    "/dev/nvme1n1p3",
+    "/dev/nvme2n1",
+    "/dev/nvme2n1p1",
+    "/dev/nvme2n1p2",
+    "/dev/nvme2n3p3",
     "/dev/mmcblk",
     "/dev/fuse",
     "/dev/sda1",
@@ -50,6 +61,10 @@
     "/dev/sdb3",
     "/dev/sda4",
     "/dev/sdb4",
+    "/dev/sda5",
+    "/dev/sda6",
+    "/dev/sda7",
+    "/dev/sda8",
     "/dev/nvme0",
     "/dev/nvme1",
     "/dev/nvme2"
@@ -72,10 +87,12 @@
     "PUID": 0
   },
   "ports": {
+    "8889/tcp": 8889,
     "9117/tcp": 9117
   },
   "ports_description": {
-    "9117/tcp": "web interface"
+    "8889/tcp": "Alternative port",
+    "9117/tcp": "Web interface"
   },
   "privileged": [
     "SYS_ADMIN",
@@ -85,13 +102,15 @@
     "PGID": "int",
     "PUID": "int",
     "TZ": "str?",
+    "cifsdomain": "str?",
     "cifspassword": "str?",
     "cifsusername": "str?",
     "localdisks": "str?",
     "networkdisks": "str?"
   },
   "slug": "jackett_nas",
+  "udev": true,
   "url": "https://github.com/alexbelgium/hassio-addons/tree/master/jackett",
-  "version": "0.20.3627",
-  "webui": "[PROTO:ssl]://[HOST]:[PORT:9117]"
+  "version": "0.22.1447",
+  "webui": "http://[HOST]:[PORT:9117]"
 }

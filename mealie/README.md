@@ -1,25 +1,27 @@
-## Breaking change : no database migration with v1.0. Please backup your database from within Mealie before upgrading, then restore the database after upgrading. Infos here : https://hay-kot.github.io/mealie/documentation/getting-started/updating/. Something to note however about the database migration is that only the recipe data gets migrated. Not user data or other settings, and the favorite recipes are also no longer listed as such so they need to be selected again (Thanks @SeeThisIsMe)
-
+## &#9888; Open Issue : [🐛 [Mealie] Profile pictures do not show in ingress (opened 2025-01-11)](https://github.com/alexbelgium/hassio-addons/issues/1714) by [@IceBotYT](https://github.com/IceBotYT)
 # Hass.io Add-ons: Mealie
 
 [![Donate][donation-badge]](https://www.buymeacoffee.com/alexbelgium)
+[![Donate][paypal-badge]](https://www.paypal.com/donate/?hosted_button_id=DZFULJZTP3UQA)
 
 ![Version](https://img.shields.io/badge/dynamic/json?label=Version&query=%24.version&url=https%3A%2F%2Fraw.githubusercontent.com%2Falexbelgium%2Fhassio-addons%2Fmaster%2Fmealie%2Fconfig.json)
 ![Ingress](https://img.shields.io/badge/dynamic/json?label=Ingress&query=%24.ingress&url=https%3A%2F%2Fraw.githubusercontent.com%2Falexbelgium%2Fhassio-addons%2Fmaster%2Fmealie%2Fconfig.json)
 ![Arch](https://img.shields.io/badge/dynamic/json?color=success&label=Arch&query=%24.arch&url=https%3A%2F%2Fraw.githubusercontent.com%2Falexbelgium%2Fhassio-addons%2Fmaster%2Fmealie%2Fconfig.json)
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/9c6cf10bdbba45ecb202d7f579b5be0e)](https://www.codacy.com/gh/alexbelgium/hassio-addons/dashboard?utm_source=github.com&utm_medium=referral&utm_content=alexbelgium/hassio-addons&utm_campaign=Badge_Grade)
-[![GitHub Super-Linter](https://github.com/alexbelgium/hassio-addons/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
-[![Builder](https://github.com/alexbelgium/hassio-addons/workflows/Builder/badge.svg)](https://github.com/alexbelgium/hassio-addons/actions/workflows/builder.yaml)
+[![GitHub Super-Linter](https://img.shields.io/github/actions/workflow/status/alexbelgium/hassio-addons/weekly-supelinter.yaml?label=Lint%20code%20base)](https://github.com/alexbelgium/hassio-addons/actions/workflows/weekly-supelinter.yaml)
+[![Builder](https://img.shields.io/github/actions/workflow/status/alexbelgium/hassio-addons/onpush_builder.yaml?label=Builder)](https://github.com/alexbelgium/hassio-addons/actions/workflows/onpush_builder.yaml)
 
-[donation-badge]: https://img.shields.io/badge/Buy%20me%20a%20coffee-%23d32f2f?logo=buy-me-a-coffee&style=flat&logoColor=white
+[donation-badge]: https://img.shields.io/badge/Buy%20me%20a%20coffee%20(no%20paypal)-%23d32f2f?logo=buy-me-a-coffee&style=flat&logoColor=white
+[paypal-badge]: https://img.shields.io/badge/Buy%20me%20a%20coffee%20with%20Paypal-0070BA?logo=paypal&style=flat&logoColor=white
 
 Warning : armv7 only supported up to version 0.4.3! It won't be updated with later versions
 
 _Thanks to everyone having starred my repo! To star it click on the image below, then it will be on top right. Thanks!_
 
+[![Stargazers repo roster for @alexbelgium/hassio-addons](https://raw.githubusercontent.com/alexbelgium/hassio-addons/master/.github/stars2.svg)](https://github.com/alexbelgium/hassio-addons/stargazers)
 
-[![Stargazers repo roster for @alexbelgium/hassio-addons](https://git-lister.onrender.com/api/stars/alexbelgium/hassio-addons?limit=30)](https://github.com/alexbelgium/hassio-addons/stargazers)
+![downloads evolution](https://raw.githubusercontent.com/alexbelgium/hassio-addons/master/mealie/stats.png)
 
 ## About
 
@@ -30,9 +32,9 @@ This addon is based on the [docker image](https://hub.docker.com/r/hkotel/mealie
 ## Configuration
 
 - Start the addon. Wait a while and check the log for any errors.
-- Open yourdomain.com:9925 (where ":9925" is the port configured in the addon).
+- Open yourdomain.com:9090 (where ":9090" is the port configured in the addon).
 - Default
-  - Username: changeme@email.com
+  - Username: changeme@example.com
   - Password: MyPassword
 
 Options can be configured through two ways :
@@ -50,7 +52,7 @@ Options can be configured through two ways :
 ```
 
 - Config.yaml
-  Additional options can be configured using the config.yaml file found in /config/addons_config/mealie/config.yaml
+  Additional options can be configured using the config.yaml file found in /homeassistant/addons_config/xxx-mealie/config.yaml
 
 The complete list of options can be seen here : https://nightly.mealie.io/documentation/getting-started/installation/backend-config/
 
@@ -59,14 +61,15 @@ The complete list of options can be seen here : https://nightly.mealie.io/docume
 ### Detailed infos (Thanks @michelangelonz)
 
 Create a restful sensor
+
 ```yaml
 sensor:
   - platform: rest
-    resource: 'http://###.###.#.#:9090/api/groups/mealplans/today'
+    resource: "http://###.###.#.#:9090/api/groups/mealplans/today"
     method: GET
-    name: Mealie todays meal 
+    name: Mealie todays meal
     headers:
-      Authorization: Bearer <put  auth here> 
+      Authorization: Bearer <put  auth here>
     value_template: "{{ value_json.value }}"
     json_attributes_path: $..recipe
     json_attributes:
@@ -80,19 +83,20 @@ sensor:
 ```
 
 Create template sensors from attributes
+
 ```yaml
-     - name: TodaysDinner
-       unique_id: sensor.TodaysDinner
-       state: "{{ state_attr('sensor.mealie_todays_meal', 'name') }}"
-     - name: TodaysDinnerDescription
-       unique_id: sensor.DinnerDescription
-       state: "{{ state_attr('sensor.mealie_todays_meal', 'description') }}"
-     - name: TodaysDinnerSlug
-       unique_id: sensor.DinnerSlug
-       state: "{{ state_attr('sensor.mealie_todays_meal', 'slug') }}"
-     - name: TodaysDinnerID
-       unique_id: sensor.DinnerID
-       state: "{{ state_attr('sensor.mealie_todays_meal', 'id') }}"
+- name: TodaysDinner
+  unique_id: sensor.TodaysDinner
+  state: "{{ state_attr('sensor.mealie_todays_meal', 'name') }}"
+- name: TodaysDinnerDescription
+  unique_id: sensor.DinnerDescription
+  state: "{{ state_attr('sensor.mealie_todays_meal', 'description') }}"
+- name: TodaysDinnerSlug
+  unique_id: sensor.DinnerSlug
+  state: "{{ state_attr('sensor.mealie_todays_meal', 'slug') }}"
+- name: TodaysDinnerID
+  unique_id: sensor.DinnerID
+  state: "{{ state_attr('sensor.mealie_todays_meal', 'id') }}"
 ```
 
 Add a generic camera for image

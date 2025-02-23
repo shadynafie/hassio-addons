@@ -1,11 +1,15 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
+set -e
 
 if bashio::config.true 'use_own_certs'; then
 
-    bashio::log.info "Using referenced ssl certificates..."
+    bashio::log.green "Using referenced ssl certificates"
     CERTFILE=$(bashio::config 'certfile')
     KEYFILE=$(bashio::config 'keyfile')
+
+    # Validate ssl
+    bashio::config.require.ssl
 
     #Check if files exist
     echo "... checking if referenced files exist"
@@ -16,5 +20,6 @@ if bashio::config.true 'use_own_certs'; then
     [[ -f /data/config/keys/cert.crt ]] && rm /data/config/keys/cert.crt
     cp /ssl/"$CERTFILE" /data/config/keys/cert.crt
     cp /ssl/"$KEYFILE" /data/config/keys/cert.key
+    echo "... done"
 
 fi

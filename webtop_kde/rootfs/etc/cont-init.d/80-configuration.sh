@@ -1,38 +1,22 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
 # shellcheck disable=SC2015
-
-# Add Edge repositories
-if bashio::config.true 'edge_repositories'; then
-    bashio::log.info "Changing app repositories to edge"
-    { echo "https://dl-cdn.alpinelinux.org/alpine/edge/community";
-        echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing";
-    echo "https://dl-cdn.alpinelinux.org/alpine/edge/main"; } > /etc/apk/repositories
-fi
-
-# Install rpi video drivers
-if bashio::config.true 'rpi_video_drivers'; then
-    bashio::log.info "Installing Rpi graphic drivers"
-    apk add --no-cache mesa-dri-vc4 mesa-dri-swrast mesa-gbm xf86-video-fbdev >/dev/null && bashio::log.green "... done" ||
-    bashio::log.red "... not successful. Are you on a rpi?"
-fi
-
-# Fix mate software center
-if [ -f /usr/lib/dbus-1.0/dbus-daemon-launch-helper ]; then
-    echo "Allow software center"
-    chmod u+s /usr/lib/dbus-1.0/dbus-daemon-launch-helper
-    service dbus restart
-fi
+set -e
 
 # Install specific apps
 if bashio::config.has_value 'additional_apps'; then
     bashio::log.info "Installing additional apps :"
     # hadolint ignore=SC2005
     NEWAPPS=$(bashio::config 'additional_apps')
-    for APP in ${NEWAPPS//,/ }; do
-        bashio::log.green "... $APP"
-        # shellcheck disable=SC2015
-        apk add --no-cache "$APP" >/dev/null || bashio::log.red "... not successful, please check package name"
+    for packagestoinstall in ${NEWAPPS//,/ }; do
+        bashio::log.green "... $packagestoinstall"
+        if command -v "apk" &>/dev/null; then
+            apk add --no-cache "$packagestoinstall" &>/dev/null || (bashio::log.fatal "Error : $packagestoinstall not found")
+        elif command -v "apt" &>/dev/null; then
+            apt-get install -yqq --no-install-recommends "$packagestoinstall" &>/dev/null || (bashio::log.fatal "Error : $packagestoinstall not found")
+        elif command -v "pacman" &>/dev/null; then
+            pacman --noconfirm -S "$packagestoinstall" &>/dev/null || (bashio::log.fatal "Error : $packagestoinstall not found")
+        fi
     done
 fi
 
@@ -40,16 +24,17 @@ fi
 if bashio::config.has_value 'TZ'; then
     TIMEZONE=$(bashio::config 'TZ')
     bashio::log.info "Setting timezone to $TIMEZONE"
-    ln -snf /usr/share/zoneinfo/"$TIMEZONE" /etc/localtime && echo "$TIMEZONE" >/etc/timezone
-fi
+    ln -snf /usr/share/zoneinfo/"$TIMEZONE" /etc/localtime
+    echo "$TIMEZONE" >/etc/timezone
+fi || (bashio::log.fatal "Error : $TIMEZONE not found. Here is a list of valid timezones : https://manpages.ubuntu.com/manpages/focal/man3/DateTime::TimeZone::Catalog.3pm.html")
 
 # Set keyboard
 if bashio::config.has_value 'KEYBOARD'; then
     KEYBOARD=$(bashio::config 'KEYBOARD')
     bashio::log.info "Setting keyboard to $KEYBOARD"
-    sed -i "1a export KEYBOARD=$KEYBOARD" /etc/s6-overlay/s6-rc.d/svc-web/run
     if [ -d /var/run/s6/container_environment ]; then printf "%s" "$KEYBOARD" > /var/run/s6/container_environment/KEYBOARD; fi
-fi
+    printf "%s\n" "KEYBOARD=\"$KEYBOARD\"" >> ~/.bashrc
+fi || true
 
 # Set password
 if bashio::config.has_value 'PASSWORD'; then
@@ -57,4 +42,36 @@ if bashio::config.has_value 'PASSWORD'; then
     PASSWORD=$(bashio::config 'PASSWORD')
     passwd -d abc
     echo -e "$PASSWORD\n$PASSWORD" | passwd abc
+elif ! bashio::config.has_value 'PASSWORD' && [[ -n "$(bashio::addon.port "3000")" ]] && [[ -n $(bashio::addon.port "3001") ]]; then
+    bashio::log.warning "SEVERE RISK IDENTIFIED"
+    bashio::log.warning "You are opening an external port but your password is not defined"
+    bashio::log.warning "You risk being hacked ! Please disable the external ports, or use a password"
 fi
+
+# Set password
+if bashio::config.true 'install_ms_edge'; then
+    bashio::log.info "Adding microsoft edge"
+    # Install edge
+    apt-get update
+    echo "**** install edge ****"
+    apt-get install --no-install-recommends -y ca-certificates
+    if [ -z ${EDGE_VERSION+x} ]; then \
+        EDGE_VERSION=$(curl -sL https://packages.microsoft.com/repos/edge/pool/main/m/microsoft-edge-stable/ | \
+        awk -F'(<a href="microsoft-edge-stable_|_amd64.deb\")' '/href=/ {print $2}' | sort --version-sort | tail -1); \
+    fi
+    curl -o /tmp/edge.deb -L "https://packages.microsoft.com/repos/edge/pool/main/m/microsoft-edge-stable/microsoft-edge-stable_${EDGE_VERSION}_amd64.deb"
+    dpkg -I /tmp/edge.deb && break || sleep 10
+    apt-get install --no-install-recommends -y /tmp/edge.deb
+    echo "**** edge docker tweaks ****"
+    if [ -f /usr/bin/microsoft-edge-stable ]; then
+        mv /usr/bin/microsoft-edge-stable /usr/bin/microsoft-edge-real
+    else
+        mv /usr/bin/microsoft-edge /usr/bin/microsoft-edge-real
+    fi
+    mv /helpers/microsoft-edge-stable /usr/bin/
+fi
+
+# Set permissions
+echo "... setting permissions for node user"
+usermod -o -u 0 abc &>/dev/null
+groupmod -o -g 0 abc &>/dev/null

@@ -1,8 +1,9 @@
 {
-  "last_update": "19-02-2023",
+  "github_exclude": "pro",
+  "last_update": "15-02-2025",
   "repository": "alexbelgium/hassio-addons",
   "slug": "tdarr",
   "source": "dockerhub",
   "upstream_repo": "haveagitgat/tdarr",
-  "upstream_version": "2.00.19.1"
+  "upstream_version": "2.32.01"
 }

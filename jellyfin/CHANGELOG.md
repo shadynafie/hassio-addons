@@ -1,36 +1,142 @@
 
+## 10.10.6 (21-02-2025)
+- Update to latest version from linuxserver/docker-jellyfin (changelog : https://github.com/linuxserver/docker-jellyfin/releases)
+- BREAKING CHANGE : Change default data location to /share rather than main system config folder. This is fully customizable through the data_location option. Also, is now allowing to use /config for a seemless backup of the library with the addon (not recommended as will mean very large backups at each update)
+- Manual update forced
+
+## 10.10.5 (01-02-2025)
+- Update to latest version from linuxserver/docker-jellyfin (changelog : https://github.com/linuxserver/docker-jellyfin/releases)
+
+## 10.10.4 (25-01-2025)
+- Update to latest version from linuxserver/docker-jellyfin (changelog : https://github.com/linuxserver/docker-jellyfin/releases)
+
+## 10.10.3 (23-11-2024)
+- Update to latest version from linuxserver/docker-jellyfin (changelog : https://github.com/linuxserver/docker-jellyfin/releases)
+
+## 10.10.1 (09-11-2024)
+- Update to latest version from linuxserver/docker-jellyfin (changelog : https://github.com/linuxserver/docker-jellyfin/releases)
+
+## 10.10.0 (02-11-2024)
+- Update to latest version from linuxserver/docker-jellyfin (changelog : https://github.com/linuxserver/docker-jellyfin/releases)
+
+## 10.9.11 (14-09-2024)
+- Update to latest version from linuxserver/docker-jellyfin (changelog : https://github.com/linuxserver/docker-jellyfin/releases)
+
+## 10.9.10 (31-08-2024)
+- Update to latest version from linuxserver/docker-jellyfin (changelog : https://github.com/linuxserver/docker-jellyfin/releases)
+
+## 10.9.9 (10-08-2024)
+- Update to latest version from linuxserver/docker-jellyfin (changelog : https://github.com/linuxserver/docker-jellyfin/releases)
+
+## 10.9.8 (27-07-2024)
+- Update to latest version from linuxserver/docker-jellyfin (changelog : https://github.com/linuxserver/docker-jellyfin/releases)
+
+## 10.9.7 (29-06-2024)
+- Update to latest version from linuxserver/docker-jellyfin (changelog : https://github.com/linuxserver/docker-jellyfin/releases)
+
+## 10.9.6 (08-06-2024)
+- Update to latest version from linuxserver/docker-jellyfin (changelog : https://github.com/linuxserver/docker-jellyfin/releases)
+## 10.9.3-2 (01-06-2024)
+- Minor bugs fixed
+
+## 10.9.3 (01-06-2024)
+- Update to latest version from linuxserver/docker-jellyfin (changelog : https://github.com/linuxserver/docker-jellyfin/releases)
+
+## 10.9.2 (18-05-2024)
+- Update to latest version from linuxserver/docker-jellyfin (changelog : https://github.com/linuxserver/docker-jellyfin/releases)
+
+## 10.8.13-3-3 (10-12-2023)
+
+- Minor bugs fixed
+- Corrected 00-smb_mounts.sh logic for servers that don't support anonymous access
+
+## 10.8.13-1 (04-12-2023)
+
+- Allows non-admin users to use paperless from HA sidebar
+
+## 10.8.13 (02-12-2023)
+
+- Update to latest version from linuxserver/docker-jellyfin
+## 10.8.12-4 (21-11-2023)
+
+- Minor bugs fixed
+## 10.8.12-2 (12-11-2023)
+
+- Minor bugs fixed
+
+## 10.8.12 (11-11-2023)
+
+- Update to latest version from linuxserver/docker-jellyfin
+
+## 10.8.11 (30-09-2023)
+
+- Update to latest version from linuxserver/docker-jellyfin
+- Arm32v7 discontinued by linuxserver, latest working version pinned
+
+## 10.8.10-6 (08-05-2023)
+
+- Minor bugs fixed
+
+## 10.8.10-5 (04-05-2023)
+
+- Minor bugs fixed
+
+## 10.8.10-2 (04-05-2023)
+
+- Minor bugs fixed
+- Add symlink for transcodes folder https://github.com/alexbelgium/hassio-addons/issues/777
+
+## 10.8.10 (29-04-2023)
+
+- Update to latest version from linuxserver/docker-jellyfin
+
+## 10.8.9 (25-03-2023)
+
+- Update to latest version from linuxserver/docker-jellyfin
+
 ## 10.8.9-1-ls203 (11-03-2023)
+
 - Update to latest version from linuxserver/docker-jellyfin
 - Implemented healthcheck
 
 ## 10.8.9-1-ls202 (04-03-2023)
+
 - Update to latest version from linuxserver/docker-jellyfin
 
 ## 10.8.9-1-ls201 (25-02-2023)
+
 - Update to latest version from linuxserver/docker-jellyfin
 
 ## 10.8.9-1-ls200 (19-02-2023)
+
 - Update to latest version from linuxserver/docker-jellyfin
 
 ## 10.8.9-1-ls199 (11-02-2023)
+
 - Update to latest version from linuxserver/docker-jellyfin
 
 ## 10.8.9-1-ls198 (04-02-2023)
+
 - Update to latest version from linuxserver/docker-jellyfin
 
 ## 10.8.9-1-ls197 (28-01-2023)
+
 - Update to latest version from linuxserver/docker-jellyfin
 
 ## 10.8.8-1-ls196 (21-01-2023)
+
 - Update to latest version from linuxserver/docker-jellyfin
 
 ## 10.8.8-1-ls195 (14-01-2023)
+
 - Update to latest version from linuxserver/docker-jellyfin
 
 ## 10.8.8-1-ls194 (07-01-2023)
+
 - Update to latest version from linuxserver/docker-jellyfin
 
 ## 10.8.8-1-ls193 (25-12-2022)
+
 - Update to latest version from linuxserver/docker-jellyfin
 - Fixed ingress
 - Expose web folder to /config/addons_config/jellyfin/web

@@ -1,8 +1,133 @@
+## 4.0.6-r0-ls272-4 (21-02-2025)
+- Minor bugs fixed
+## 4.0.6-r0-ls272-3 (20-02-2025)
+- Minor bugs fixed
+## 4.0.6-r0-ls272-2 (19-01-2025)
+- Selected flood as default ui
+- Disabled ui with issues https://github.com/alexbelgium/hassio-addons/issues/1718
+
+## 4.0.6-r0-ls272 (17-12-2024)
+- Minor bugs fixed
+- Fix transmission web control
+- Update to latest
+
+## 4.0.6 (22-06-2024)
+- Update to latest version from linuxserver/docker-transmission (changelog : https://github.com/linuxserver/docker-transmission/releases)
+## 4.0.5-3 (06-04-2024)
+- Minor bugs fixed
+
+## 4.0.5-2 (05-03-2024)
+
+- Minor bugs fixed
+
+## 4.0.5 (09-12-2023)
+
+- Update to latest version from linuxserver/docker-transmission
+## 4.0.4-2 (27-11-2023)
+
+- Minor bugs fixed
+- Feat : new transmission-web-control https://github.com/alexbelgium/hassio-addons/issues/1098
+- Feat : prevent caching in Ingress to allow for faster UI changes
+
+## 4.0.4 (02-09-2023)
+
+- Update to latest version from linuxserver/docker-transmission
+
+## 4.0.3 (27-08-2023)
+
+- Update to latest version from linuxserver/docker-transmission
+
+## 4.0.3-r6-ls193 (19-08-2023)
+
+- Update to latest version from linuxserver/docker-transmission
+
+## 4.0.3-r6-ls192 (12-08-2023)
+
+- Update to latest version from linuxserver/docker-transmission
+
+## 4.0.3-r6-ls190 (05-08-2023)
+
+- Update to latest version from linuxserver/docker-transmission
+
+## 4.0.3-r3-ls187 (29-07-2023)
+
+- Update to latest version from linuxserver/docker-transmission
+
+## 4.0.3-r3-ls186 (22-07-2023)
+
+- Update to latest version from linuxserver/docker-transmission
+
+## 4.0.3-r3-ls185 (15-07-2023)
+
+- Update to latest version from linuxserver/docker-transmission
+
+## 4.0.3-r3-ls184 (08-07-2023)
+
+- Update to latest version from linuxserver/docker-transmission
+
+## 4.0.3-r3-ls183 (01-07-2023)
+
+- Update to latest version from linuxserver/docker-transmission
+
+## 4.0.3-r3-ls182 (24-06-2023)
+
+- Update to latest version from linuxserver/docker-transmission
+
+## 4.0.3-r3-ls181 (17-06-2023)
+
+- Update to latest version from linuxserver/docker-transmission
+
+## 4.0.3-r2-ls179 (03-06-2023)
+
+- Update to latest version from linuxserver/docker-transmission
+
+## 4.0.3-r2-ls177 (27-05-2023)
+
+- Update to latest version from linuxserver/docker-transmission
+
+## 4.0.3-r2-ls176 (19-05-2023)
+
+- Update to latest version from linuxserver/docker-transmission
+
+## 4.0.3-r1-ls173 (13-05-2023)
+
+- Update to latest version from linuxserver/docker-transmission
+- Feat : cifsdomain added
+
+## 4.0.3-r0-ls171 (06-05-2023)
+
+- Update to latest version from linuxserver/docker-transmission
+
+## 4.0.3-r0-ls170 (29-04-2023)
+
+- Update to latest version from linuxserver/docker-transmission
+
+## 4.0.3-r0-ls169 (21-04-2023)
+
+- Update to latest version from linuxserver/docker-transmission
+
+## 4.0.2-r4-ls167 (15-04-2023)
+
+- Update to latest version from linuxserver/docker-transmission
+
+## 4.0.2-r4-ls166 (08-04-2023)
+
+- Update to latest version from linuxserver/docker-transmission
+
+## 4.0.2-r3-ls165 (31-03-2023)
+
+- Update to latest version from linuxserver/docker-transmission
+
+## 4.0.2-r2-ls162 (24-03-2023)
+
+- Update to latest version from linuxserver/docker-transmission
 
 ## 4.0.2-r2-ls161 (18-03-2023)
+
 - Update to latest version from linuxserver/docker-transmission
 
 ## 4.0.1-r0-ls159 (11-03-2023)
+
 - Update to latest version from linuxserver/docker-transmission
 - Implemented healthcheck
 

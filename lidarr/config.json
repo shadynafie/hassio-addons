@@ -7,6 +7,19 @@
   "codenotary": "alexandrep.github@gmail.com",
   "description": "Music collection manager for Usenet and BitTorrent users",
   "devices": [
+    "/dev/dri",
+    "/dev/dri/card0",
+    "/dev/dri/card1",
+    "/dev/dri/renderD128",
+    "/dev/vchiq",
+    "/dev/video10",
+    "/dev/video11",
+    "/dev/video12",
+    "/dev/video13",
+    "/dev/video14",
+    "/dev/video15",
+    "/dev/video16",
+    "/dev/ttyUSB0",
     "/dev/sda",
     "/dev/sdb",
     "/dev/sdc",
@@ -15,8 +28,19 @@
     "/dev/sdf",
     "/dev/sdg",
     "/dev/nvme",
+    "/dev/nvme0",
+    "/dev/nvme0n1",
     "/dev/nvme0n1p1",
     "/dev/nvme0n1p2",
+    "/dev/nvme0n1p3",
+    "/dev/nvme1n1",
+    "/dev/nvme1n1p1",
+    "/dev/nvme1n1p2",
+    "/dev/nvme1n1p3",
+    "/dev/nvme2n1",
+    "/dev/nvme2n1p1",
+    "/dev/nvme2n1p2",
+    "/dev/nvme2n3p3",
     "/dev/mmcblk",
     "/dev/fuse",
     "/dev/sda1",
@@ -37,6 +61,10 @@
     "/dev/sdb3",
     "/dev/sda4",
     "/dev/sdb4",
+    "/dev/sda5",
+    "/dev/sda6",
+    "/dev/sda7",
+    "/dev/sda8",
     "/dev/nvme0",
     "/dev/nvme1",
     "/dev/nvme2"
@@ -51,8 +79,7 @@
   "map": [
     "config:rw",
     "share:rw",
-    "media:rw",
-    "config:rw"
+    "media:rw"
   ],
   "name": "Lidarr NAS",
   "options": {
@@ -63,7 +90,7 @@
     "8686/tcp": 8686
   },
   "ports_description": {
-    "8686/tcp": "web interface"
+    "8686/tcp": "Web interface"
   },
   "privileged": [
     "SYS_ADMIN",
@@ -73,13 +100,15 @@
     "PGID": "int",
     "PUID": "int",
     "TZ": "str?",
+    "cifsdomain": "str?",
     "cifspassword": "str?",
     "cifsusername": "str?",
     "localdisks": "str?",
     "networkdisks": "str?"
   },
   "slug": "lidarr_nas",
-  "url": "https://github.com/alexbelgium/hassio-addons/blob/master/lidarr/Readme.md",
-  "version": "1.0.2.2592-ls113-2",
+  "udev": true,
+  "url": "https://github.com/alexbelgium/hassio-addons/blob/master/lidarr/README.md",
+  "version": "2.9.6.4552",
   "webui": "[PROTO:ssl]://[HOST]:[PORT:8686]"
 }

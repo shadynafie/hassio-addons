@@ -1,6 +1,7 @@
 #!/usr/bin/env bashio
 # shellcheck shell=bash
 # shellcheck disable=SC2155,SC2016
+set -e
 
 ###################################
 # Export all addon options as env #
@@ -116,4 +117,4 @@ esac
 ##############
 
 bashio::log.info "Starting app"
-/./docker_entrypoint.sh
+/./docker_entrypoint.sh launch

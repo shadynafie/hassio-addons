@@ -14,9 +14,28 @@
 # 1 Build Image #
 #################
 
-ARG BUILD_FROM
-ARG BUILD_VERSION
-FROM ${BUILD_FROM}
+# Stage 1: Build Frontend with SUB_PATH
+FROM node:16 AS builder
+
+# Set the SUB_PATH environment variable
+ARG SUB_PATH="/mealie/"
+ENV SUB_PATH=$SUB_PATH
+
+WORKDIR /app
+ENV MEALIE_VERSION="v2.6.0"
+
+# Clone the Mealie repository to get the frontend source code
+# hadolint ignore=DL3003
+RUN git clone --branch "$MEALIE_VERSION" https://github.com/mealie-recipes/mealie.git . && \
+    cd /app/frontend && \
+    yarn install --prefer-offline --frozen-lockfile --non-interactive --production=false --network-timeout 1000000 && \
+    yarn generate
+
+# Stage 2: Build the Final Image
+FROM hkotel/mealie:latest
+
+# Copy the rebuilt frontend files into the final image
+COPY --from=builder /app/frontend/dist /spa/static
 
 ##################
 # 2 Modify Image #
@@ -29,7 +48,8 @@ ENV S6_CMD_WAIT_FOR_SERVICES=1 \
 
 # Correct data path
 # hadolint ignore=DL4006
-RUN grep -rl "/app/data" /app | xargs sed -i 's|/app/data|/config/addons_config/mealie_data|g'
+RUN grep -rl "/app/data" /app | xargs sed -i 's|/app/data|/config|g' && \
+    sed -i "s|change_user$|# change_user|g" /app/run.sh
 
 ##################
 # 3 Install apps #
@@ -38,51 +58,49 @@ RUN grep -rl "/app/data" /app | xargs sed -i 's|/app/data|/config/addons_config/
 # Add rootfs
 COPY rootfs/ /
 
-# Corrects permissions for s6 v3
-RUN if [ -d /etc/cont-init.d ]; then chmod -R 755 /etc/cont-init.d; fi && \
-    if [ -d /etc/services.d ]; then chmod -R 755 /etc/services.d; fi && \
-    if [ -f /entrypoint.sh ]; then chmod 755 /entrypoint.sh; fi
+# Uses /bin for compatibility purposes
+# hadolint ignore=DL4005
+RUN if [ ! -f /bin/sh ] && [ -f /usr/bin/sh ]; then ln -s /usr/bin/sh /bin/sh; fi && \
+    if [ ! -f /bin/bash ] && [ -f /usr/bin/bash ]; then ln -s /usr/bin/bash /bin/bash; fi
 
 # Modules
 ARG MODULES="00-banner.sh 01-custom_script.sh"
 
 # Automatic modules download
-RUN if ! command -v bash >/dev/null 2>/dev/null; then (apt-get update && apt-get install -yqq --no-install-recommends bash || apk add --no-cache bash) >/dev/null; fi \
-    && if ! command -v curl >/dev/null 2>/dev/null; then (apt-get update && apt-get install -yqq --no-install-recommends curl || apk add --no-cache curl) >/dev/null; fi \
-    && apt-get update && apt-get install -yqq --no-install-recommends ca-certificates || apk add --no-cache ca-certificates >/dev/null || true \
-    && mkdir -p /etc/cont-init.d \
-    && for scripts in $MODULES; do echo "$scripts" && curl -f -L -s -S "https://raw.githubusercontent.com/alexbelgium/hassio-addons/master/.templates/$scripts" -o /etc/cont-init.d/"$scripts" && [ "$(sed -n '/\/bin/p;q' /etc/cont-init.d/"$scripts")" != "" ] || (echo "script failed to install $scripts" && exit 1); done \
-    && chmod -R 755 /etc/cont-init.d
+ADD "https://raw.githubusercontent.com/alexbelgium/hassio-addons/master/.templates/ha_automodules.sh" "/ha_automodules.sh"
+RUN chmod 744 /ha_automodules.sh && /ha_automodules.sh "$MODULES" && rm /ha_automodules.sh
 
 # Manual apps
-ENV PACKAGES="jq curl bash"
+ENV PACKAGES="nginx"
 
 # Automatic apps & bashio
-# hadolint ignore=SC2015
-RUN if ! command -v bash >/dev/null 2>/dev/null; then (apt-get update && apt-get install -yqq --no-install-recommends bash || apk add --no-cache bash) >/dev/null; fi \
-    && if ! command -v curl >/dev/null 2>/dev/null; then (apt-get update && apt-get install -yqq --no-install-recommends curl || apk add --no-cache curl) >/dev/null; fi \
-    && curl -f -L -s -S "https://raw.githubusercontent.com/alexbelgium/hassio-addons/master/.templates/automatic_packages.sh" --output /automatic_packages.sh \
-    && chmod 777 /automatic_packages.sh \
-    && eval /./automatic_packages.sh "${PACKAGES:-}" \
-    && rm /automatic_packages.sh
+ADD "https://raw.githubusercontent.com/alexbelgium/hassio-addons/master/.templates/ha_autoapps.sh" "/ha_autoapps.sh"
+RUN chmod 744 /ha_autoapps.sh && /ha_autoapps.sh "$PACKAGES" && rm /ha_autoapps.sh
 
 ################
 # 4 Entrypoint #
 ################
 
+# Add entrypoint
+ENV S6_STAGE2_HOOK=/ha_entrypoint.sh
+ADD "https://raw.githubusercontent.com/alexbelgium/hassio-addons/master/.templates/ha_entrypoint.sh" "/ha_entrypoint.sh"
+
+# Entrypoint modifications
+ADD "https://raw.githubusercontent.com/alexbelgium/hassio-addons/master/.templates/ha_entrypoint_modif.sh" "/ha_entrypoint_modif.sh"
+RUN chmod 777 /ha_entrypoint.sh /ha_entrypoint_modif.sh && /ha_entrypoint_modif.sh && rm /ha_entrypoint_modif.sh
+
 RUN \
     # Add custom instructions to run.sh on armv7
-    if [ -f /app/run.sh ]; then \
     sed -i '1d' /app/run.sh \
     && cat /app/run.sh >> /run.txt \
     && cat /run.txt > /app/run.sh \
-    && chmod +x /app/run.sh; \
-    # Add custom instructions to run.sh on other aarch
-    elif [ -f /app/mealie/run.sh ]; then \
-    sed -i '1d' /app/mealie/run.sh \
-    && cat /app/mealie/run.sh >> /run.txt \
-    && cat /run.txt > /app/mealie/run.sh \
-    && chmod +x /app/mealie/run.sh; fi
+    && chmod +x /app/run.sh
+
+# Expose necessary ports
+EXPOSE 9000
+
+# Set the entrypoint
+ENTRYPOINT ["/app/run.sh"]
 
 ############
 # 5 Labels #
@@ -95,6 +113,7 @@ ARG BUILD_NAME
 ARG BUILD_REF
 ARG BUILD_REPOSITORY
 ARG BUILD_VERSION
+ENV BUILD_VERSION="${BUILD_VERSION}"
 LABEL \
     io.hass.name="${BUILD_NAME}" \
     io.hass.description="${BUILD_DESCRIPTION}" \
@@ -118,11 +137,4 @@ LABEL \
 # 6 Healthcheck #
 #################
 
-ENV HEALTH_PORT="" \
-    HEALTH_URL=""
-HEALTHCHECK \
-    --interval=5s \
-    --retries=5 \
-    --start-period=30s \
-    --timeout=25s \
-    CMD python $MEALIE_HOME/mealie/scripts/healthcheck.py || exit 1
+# Use upstream

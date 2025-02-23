@@ -27,8 +27,19 @@
     "/dev/sdf",
     "/dev/sdg",
     "/dev/nvme",
+    "/dev/nvme0",
+    "/dev/nvme0n1",
     "/dev/nvme0n1p1",
     "/dev/nvme0n1p2",
+    "/dev/nvme0n1p3",
+    "/dev/nvme1n1",
+    "/dev/nvme1n1p1",
+    "/dev/nvme1n1p2",
+    "/dev/nvme1n1p3",
+    "/dev/nvme2n1",
+    "/dev/nvme2n1p1",
+    "/dev/nvme2n1p2",
+    "/dev/nvme2n3p3",
     "/dev/mmcblk",
     "/dev/fuse",
     "/dev/sda1",
@@ -49,6 +60,10 @@
     "/dev/sdb3",
     "/dev/sda4",
     "/dev/sdb4",
+    "/dev/sda5",
+    "/dev/sda6",
+    "/dev/sda7",
+    "/dev/sda8",
     "/dev/nvme0",
     "/dev/nvme1",
     "/dev/nvme2"
@@ -83,6 +98,7 @@
     "keyfile": "privkey.pem",
     "ssl": false
   },
+  "panel_admin": false,
   "panel_icon": "mdi:camera",
   "ports": {
     "2342/tcp": 2342
@@ -104,6 +120,7 @@
     "STORAGE_PATH": "str",
     "UPLOAD_NSFW": "bool",
     "certfile": "str",
+    "cifsdomain": "str?",
     "cifspassword": "str?",
     "cifsusername": "str?",
     "graphic_drivers": "list(|mesa)?",
@@ -117,7 +134,8 @@
     "mysql:want"
   ],
   "slug": "photoprism",
-  "url": "https://github.com/alexbelgium/hassio-addons-test",
-  "version": "Preview-5",
+  "udev": true,
+  "url": "https://github.com/alexbelgium/hassio-addons",
+  "version": "ubuntu-2024-09-15",
   "video": true
 }
